@@ -1,0 +1,22 @@
+{
+  "name": "lspmail",
+  "version": "1.0.0",
+  "description": "LSPMail — email for people and businesses. 40 GB to start.",
+  "main": "src/server.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/migrate.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "razorpay": "^2.9.4",
+    "resend": "^4.0.0"
+  }
+}

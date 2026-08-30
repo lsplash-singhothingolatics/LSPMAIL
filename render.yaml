@@ -1,0 +1,57 @@
+# Render blueprint: web service + Postgres. Deploy from GitHub with Blueprints > New.
+services:
+  - type: web
+    name: lspmail
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm ci && npm run migrate
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lspmail-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_NAME
+        value: LSPMail
+      # Set these in the Render dashboard after the first deploy:
+      - key: APP_URL          # https://lspmail.onrender.com
+        sync: false
+      - key: MAIL_DOMAIN      # the domain you verified in Resend
+        sync: false
+      - key: OTP_FROM
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_INBOUND_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: YAHOO_CLIENT_ID
+        sync: false
+      - key: YAHOO_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+
+databases:
+  - name: lspmail-db
+    plan: basic-256mb
+    region: singapore

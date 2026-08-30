@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LSPMail — mail with room to breathe</title>
+<meta name="description" content="LSPMail gives every account 40 GB of mail storage, custom domains for businesses, and sign-in with Google, Yahoo, GitHub or a one-time code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600;650&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+<main class="auth">
+  <section class="auth-brand">
+    <svg class="draft" viewBox="0 0 560 420" aria-hidden="true">
+      <rect class="d1" x="60" y="80" width="420" height="270" rx="18"/>
+      <path class="d2" d="M60 98 L270 250 L480 98"/>
+      <path class="d3" d="M60 332 L215 205 M480 332 L325 205"/>
+      <path class="seal" d="M270 250 m-34 0 a34 34 0 1 0 68 0 a34 34 0 1 0 -68 0"/>
+    </svg>
+
+    <div>
+      <div class="wordmark" style="font-size:20px"><span class="lsp">LSP</span>Mail</div>
+    </div>
+
+    <div style="position:relative">
+      <span class="eyebrow">Mail, unhurried</span>
+      <h1>Forty gigabytes to start.</h1>
+      <p class="lede">Every account opens with 40 GB, a real address, and no rush to pay for it. Add your own domain when the business needs one.</p>
+
+      <dl class="brand-facts">
+        <div class="fact"><dt>Storage on sign-up</dt><dd>40 GB</dd></div>
+        <div class="fact"><dt>Addresses you can hold</dt><dd>1 → unlimited</dd></div>
+        <div class="fact"><dt>Custom domains from</dt><dd>₹999 / yr</dd></div>
+      </dl>
+    </div>
+
+    <p style="position:relative;font-size:12px;color:var(--faint);margin:0">
+      Delivery by Resend. Payments by Razorpay.
+    </p>
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-card">
+      <div id="step-choose">
+        <span class="eyebrow">Sign in</span>
+        <h2>Open your mailbox</h2>
+        <p class="sub">Use an account you already have, or we'll mail you a code.</p>
+
+        <div id="providers"></div>
+
+        <div class="divider">or</div>
+
+        <form id="email-form" novalidate>
+          <input class="field" id="email" type="email" name="email" autocomplete="email"
+                 placeholder="you@example.com" required style="margin-bottom:10px">
+          <button class="btn btn-primary btn-block btn-lg" type="submit" id="send-code">Email me a code</button>
+        </form>
+      </div>
+
+      <div id="step-code" hidden>
+        <span class="eyebrow">Check your inbox</span>
+        <h2>Enter the code</h2>
+        <p class="sub">We sent six digits to <strong id="sent-to"></strong>. It expires in 10 minutes.</p>
+
+        <div class="otp-boxes" id="otp">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 1">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 2">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 3">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 4">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 5">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 6">
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg" id="verify">Sign in</button>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:12.5px">
+          <button class="btn btn-ghost" id="back" style="padding:4px 0">Use a different address</button>
+          <button class="btn btn-ghost" id="resend" style="padding:4px 0">Send again</button>
+        </div>
+      </div>
+
+      <div id="msg" style="margin-top:16px"></div>
+
+      <p class="auth-foot">
+        By signing in you agree to the terms and the privacy notice. LSPMail never scans your mail to sell ads.
+      </p>
+    </div>
+  </section>
+</main>
+
+<script src="/js/login.js"></script>
+</body>
+</html>
