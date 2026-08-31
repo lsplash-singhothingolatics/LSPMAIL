@@ -72,11 +72,12 @@ router.get('/:id/attachments/:aid', async (req, res) => {
 // ---------- send ----------
 router.post('/send', async (req, res) => {
   const { from, to, cc = [], subject = '', bodyText = '', bodyHtml, attachments = [] } = req.body;
-
-  const recipients = (Array.isArray(to) ? to : String(to || '').split(','))
-    .map((s) => s.trim()).filter(Boolean);
+  const recipients = parseList(to);
+  const ccList = parseList(cc);
   if (!recipients.length) return res.status(400).json({ error: 'Add at least one recipient.' });
 
+  const bad = [...recipients, ...ccList].find((a) => !EMAIL_RE.test(a));
+  if (bad) return res.status(400).json({ error: `${bad} is not a valid email address.` });
   const addr = await one(
     'select * from addresses where user_id = $1 and address = $2',
     [req.user.id, String(from || '').toLowerCase()]
