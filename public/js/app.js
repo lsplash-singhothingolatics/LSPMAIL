@@ -324,6 +324,55 @@ $('#q').addEventListener('input', (e) => {
 
 $('#menu').addEventListener('click', () => $('#rail').classList.toggle('open'));
 
+// ---------- account menu ----------
+let accountMenu = null;
+
+function closeAccountMenu() {
+  accountMenu?.remove();
+  accountMenu = null;
+  document.removeEventListener('click', onDocClick, true);
+}
+
+function onDocClick(e) {
+  if (!accountMenu?.contains(e.target) && e.target !== $('#me')) closeAccountMenu();
+}
+
+$('#me').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (accountMenu) return closeAccountMenu();
+
+  const u = state.me;
+  accountMenu = document.createElement('div');
+  accountMenu.setAttribute('role', 'menu');
+  accountMenu.style.cssText = `
+    position:fixed; top:52px; right:14px; z-index:80; width:260px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:var(--shadow-pop); overflow:hidden;`;
+  accountMenu.innerHTML = `
+    <div style="padding:16px 16px 14px; border-bottom:1px solid var(--line)">
+      <div style="font-weight:600; font-size:13.5px">${esc(u.name || u.email)}</div>
+      <div style="font-size:12.5px; color:var(--faint); margin-top:2px">${esc(u.email)}</div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--faint); margin-top:9px">
+        ${esc(u.usedLabel)} of ${esc(u.quotaLabel)} · ${esc(state.plans[u.plan].name)}
+      </div>
+    </div>
+    <button class="nav-item" id="menu-plans" style="border-radius:0; padding:11px 16px">See plans</button>
+    <button class="nav-item" id="menu-signout" style="border-radius:0; padding:11px 16px; color:var(--danger)">
+      Sign out
+    </button>`;
+  document.body.appendChild(accountMenu);
+  document.addEventListener('click', onDocClick, true);
+
+  $('#menu-plans').onclick = () => { closeAccountMenu(); openPlans(); };
+  $('#menu-signout').onclick = signOut;
+});
+
+async function signOut() {
+  closeAccountMenu();
+  try { await fetch('/auth/signout', { method: 'POST' }); } catch {}
+  location.href = '/';
+}
+
 // ---------- modals ----------
 const open = (id) => ($(id).hidden = false);
 const close = (id) => ($(id).hidden = true);
