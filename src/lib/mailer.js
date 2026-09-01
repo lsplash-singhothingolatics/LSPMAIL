@@ -13,21 +13,29 @@ const resend = {
   get emails() { return client().emails; },
   get domains() { return client().domains; },
 };
+
 const FROM_OTP = process.env.OTP_FROM || `LSPMail <login@${process.env.MAIL_DOMAIN || 'lspmail.app'}>`;
 
 async function sendMail({ from, to, cc, subject, text, html, replyTo, attachments }) {
-  const { data, error } = await client().emails.send({
+  const hasText = typeof text === 'string' && text.length > 0;
+  const hasHtml = typeof html === 'string' && html.length > 0;
+
+  // Resend requires at least one body field. A subject-only message is a normal
+  // thing to send, so fall back to a newline rather than refusing it.
+  const payload = {
     from,
     to: Array.isArray(to) ? to : [to],
     cc: cc && cc.length ? cc : undefined,
     subject: subject || '(no subject)',
-    text: text || undefined,
-    html: html || undefined,
     replyTo: replyTo || undefined,
     attachments: attachments && attachments.length
       ? attachments.map((a) => ({ filename: a.filename, content: a.content }))
       : undefined,
-  });
+  };
+  if (hasHtml) payload.html = html;
+  if (hasText || !hasHtml) payload.text = hasText ? text : '\n';
+
+  const { data, error } = await client().emails.send(payload);
   if (error) throw new Error(error.message || 'Resend rejected the message');
   return data;
 }
