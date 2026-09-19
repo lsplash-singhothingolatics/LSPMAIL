@@ -103,10 +103,12 @@ create table if not exists domains (
   created_at  timestamptz not null default now()
 );
 
+-- Single-use authorization codes for "Sign in with LSPMail".
+-- user_id is bigint to match users.id, like every other foreign key here.
 create table if not exists oauth_codes (
   code_hash      text primary key,
   client_id      text not null,
-  user_id        uuid not null references users(id) on delete cascade,
+  user_id        bigint not null references users(id) on delete cascade,
   redirect_uri   text not null,
   scope          text not null default 'openid email profile',
   code_challenge text,
@@ -114,4 +116,4 @@ create table if not exists oauth_codes (
   expires_at     timestamptz not null,
   created_at     timestamptz not null default now()
 );
-create index if not exists oauth_codes_expiry_idx on oauth_codes(expires_at);
+create index if not exists oauth_codes_expiry_idx on oauth_codes (expires_at);
