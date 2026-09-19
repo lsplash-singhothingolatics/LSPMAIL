@@ -70,9 +70,13 @@ async function api(url, opts = {}) {
   if (p.get('error')) toast(p.get('error'));
   if (p.size) history.replaceState({}, '', '/app');
 
+  // Deep link from LSPSO: /app?msg=<id> opens that message straight away.
+  const deepLink = p.get('msg');
+
   await refreshMe();
   renderTabs();
   await Promise.all([loadMessages(), loadCounts()]);
+  if (deepLink) openMessage(deepLink).catch(() => toast('That message is no longer here.'));
 })();
 
 async function refreshMe() {

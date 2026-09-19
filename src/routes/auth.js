@@ -91,6 +91,15 @@ async function findOrCreateUser({ provider, uid, email, name, avatar }) {
   });
 }
 
+
+// Where to land after a successful sign-in: back to whatever sent them here
+// (an OAuth consent screen, say), otherwise the inbox.
+function afterLogin(req, res) {
+  const next = req.cookies?.lsp_next;
+  res.clearCookie('lsp_next');
+  return (typeof next === 'string' && next.startsWith('/') && !next.startsWith('//')) ? next : '/app';
+}
+
 // ---------- oauth ----------
 router.get('/:provider', (req, res) => {
   const p = PROVIDERS[req.params.provider];
@@ -145,7 +154,7 @@ router.get('/:provider/callback', async (req, res) => {
 
     const user = await findOrCreateUser({ provider: name, ...p.normalize(profile) });
     setSession(res, user);
-    res.redirect('/app');
+    res.redirect(afterLogin(req, res));
   } catch (e) {
     res.redirect(`/?error=${encodeURIComponent(e.message)}`);
   }
@@ -186,7 +195,7 @@ router.post('/otp/verify', otpLimit, async (req, res) => {
   await query('delete from otp_codes where email = $1', [email]);
   const user = await findOrCreateUser({ provider: 'otp', uid: email, email, name: null, avatar: null });
   setSession(res, user);
-  res.json({ ok: true });
+  res.json({ ok: true, next: afterLogin(req, res) });
 });
 
 router.post('/signout', (req, res) => { clearSession(res); res.json({ ok: true }); });

@@ -29,6 +29,8 @@ app.use('/api/accounts', require('./routes/accounts'));
 app.use('/api/inbound', require('./routes/inbound'));
 app.use('/api/billing', require('./routes/billing'));
 app.use('/api/domains', require('./routes/domains'));
+app.use('/api/partner', require('./routes/partner'));
+app.use('/oauth', require('./routes/oauth'));
 
 app.get('/api/config', (req, res) => {
   res.json({
@@ -39,7 +41,8 @@ app.get('/api/config', (req, res) => {
       yahoo: !!process.env.YAHOO_CLIENT_ID,
       github: !!process.env.GITHUB_CLIENT_ID,
     },
-    razorpay: !!process.env.RAZORPAY_KEY_ID,
+    payments: !!(process.env.LSPPAY_URL && process.env.LSPPAY_KEY_ID),
+    lspmailOauth: !!process.env.OAUTH_CLIENT_ID,
     signedIn: !!req.user,
   });
 });
@@ -50,6 +53,13 @@ app.get(['/app', '/app.html'], (req, res) => {
 });
 
 app.get('/', (req, res) => {
+  // /oauth/authorize sends signed-out visitors here with ?next=. Park it in a
+  // short cookie so the login flow can return them to the consent screen.
+  const next = req.query.next;
+  if (typeof next === 'string' && next.startsWith('/') && !next.startsWith('//')) {
+    res.cookie('lsp_next', next, { httpOnly: true, sameSite: 'lax', maxAge: 10 * 60 * 1000,
+                                   secure: process.env.NODE_ENV === 'production' });
+  }
   if (req.user) return res.redirect('/app');
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });

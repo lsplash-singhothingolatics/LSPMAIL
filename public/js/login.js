@@ -84,8 +84,8 @@ async function verify() {
   const btn = $('#verify');
   btn.disabled = true; btn.textContent = 'Signing in…'; say('');
   try {
-    await post('/auth/otp/verify', { email: pendingEmail, code: digits.map((d) => d.value).join('') });
-    location.href = '/app';
+    const out = await post('/auth/otp/verify', { email: pendingEmail, code: digits.map((d) => d.value).join('') });
+    location.href = out.next || '/app';
   } catch (err) {
     say(err.message);
     digits.forEach((d) => (d.value = ''));

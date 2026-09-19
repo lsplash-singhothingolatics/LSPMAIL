@@ -102,3 +102,16 @@ create table if not exists domains (
   status      text not null default 'pending',   -- pending | verifying | active
   created_at  timestamptz not null default now()
 );
+
+create table if not exists oauth_codes (
+  code_hash      text primary key,
+  client_id      text not null,
+  user_id        uuid not null references users(id) on delete cascade,
+  redirect_uri   text not null,
+  scope          text not null default 'openid email profile',
+  code_challenge text,
+  used           boolean not null default false,
+  expires_at     timestamptz not null,
+  created_at     timestamptz not null default now()
+);
+create index if not exists oauth_codes_expiry_idx on oauth_codes(expires_at);
